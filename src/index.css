@@ -1,13 +1,118 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 30pt;
+    background: black;
+    color: white;
+    text-align: center;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.mod_container {
+    background-color: rgb(44, 0, 0);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.modifier {
+    background-image: linear-gradient(65deg, rgb(95, 29, 29), rgb(253, 66, 66));
+    background-clip: text;
+    color: transparent;
+}
+
+.cat_container {
+    background-color: rgb(44, 28, 0);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.category {
+    background-image: linear-gradient(65deg, rgb(91, 74, 22), rgb(255, 213, 61));
+    background-clip: text;
+    color: transparent;
+}
+
+input[type=checkbox] {
+    display: none;
+}
+
+.numpad {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.numkey_zero {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.cat_construct button, #cat_title, #cat_value {
+    background-image: linear-gradient(To bottom, rgb(91, 74, 22), rgb(255, 213, 61));
+    background-clip: text;
+    color: transparent;
+    border-radius: 5px;
+    border-width: 0px;
+}
+
+.cat_construct {
+    background-color: rgb(44, 28, 0);
+}
+
+.cat_construct div {
+    background-color: rgb(44, 28, 0);
+}
+
+.cat_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.mod_construct button, #mod_title, #mod_value, #mod_operator {
+    background-image: linear-gradient(To bottom, rgb(95, 29, 29), rgb(253, 66, 66));
+    background-clip: text;
+    color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+}
+
+.mod_construct {
+    background-color: rgb(44, 0, 0);
+}
+
+.mod_construct div {
+    background-color: rgb(44, 0, 0);
+}
+
+.mod_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.mod_label {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+#mod_operator {
+    text-align: right;
+}
+
+#mod_value {
+    text-align: left;
+}
+
+#mod_title, #cat_title {
+    max-width: 100%;
 }
