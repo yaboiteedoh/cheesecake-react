@@ -10,18 +10,12 @@ export function Modifier({modifier, m$, activate, deactivate}) {
         if (m$(modifier.id).selected){
             activate(modifier.id)
             // styling
-            f.es$('#' + modifier.id).forEach((mod) => {
-                mod.parentElement.style.background
-                = 'rgb(70, 0, 0)';
-            })
+            f.e$('#' + modifier.id).parentElement.style.background = 'rgb(70, 0, 0)';
         // depending on selected state
         } else {
             deactivate(modifier.id)
             // styling
-            f.es$('#' + modifier.id).forEach((mod) => {
-                mod.parentElement.style.background
-                = 'rgb(44, 0, 0)';
-            })
+            f.e$('#' + modifier.id).parentElement.style.background = 'rgb(44, 0, 0)';
         }
     }
 

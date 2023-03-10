@@ -3,6 +3,7 @@ import { CategoryList } from "./CategoryList";
 import { ModifierConstructor } from "./ModifierConstructor";
 import { ModifierList } from "./ModifierList";
 import { useState } from "react";
+import * as f from "./frontendLogic"
 
 const App = () => {
   // states
@@ -21,7 +22,7 @@ const App = () => {
       // currently + or -
       operator: m_operator,
       // user input
-      value: m_value,
+      value: Number(m_value),
       // for html
       text: m_title + " " + m_operator + m_value,
       // user has this element selected
@@ -41,7 +42,7 @@ const App = () => {
       // user input
       title: c_title,
       // user input
-      value: c_value,
+      value: Number(c_value),
       // for html
       text: c_title + " " + c_value,
       // user has this element selected
@@ -73,14 +74,22 @@ const App = () => {
   }
   // generates links via all selected modifiers/categories
   function generate_links() {
-    mS$().forEach((mod) => {
-      cS$().forEach((cat) => {
-        new_link(mod.id, cat.id);
+    const mods = mS$();
+    const cats = cS$();
+    mods.forEach((mod) => {
+      mod.selected = !mod.selected;
+      f.e$('#' + mod.id).parentElement.style.background = 'rgb(44, 0, 0)';
+      cats.forEach((cat) => {
+        cat.selected = !cat.selected;
+        f.e$('#' + cat.id).parentElement.style.background = 'rgb(44, 28, 0)';
+        if(!lS$(mod.id, cat.id)){
+          new_link(mod.id, cat.id);
+        }
       });
     });
   }
 
-  // query for link object via modifier id
+  // query for link objects [] via modifier id
   function l$(m_id) {
     var link = links.filter((link) => link.m_id === m_id);
     return link;
@@ -97,13 +106,18 @@ const App = () => {
   }
   // query for modifier objects [] via selected status
   function mS$() {
-    let mod = mods.find((mod) => mod.selected === true);
+    let mod = mods.filter((mod) => mod.selected === true);
     return mod;
   }
   // query for category objects [] via selected status
   function cS$() {
-    let cat = cats.find((cat) => cat.selected === true);
+    let cat = cats.filter((cat) => cat.selected === true);
     return cat;
+  }
+  // query for link object via mod and cat ids
+  function lS$(m_id, c_id){
+    let link = cats.find((link) => link.m_id === m_id && link.c_id === c_id);
+    return link;
   }
 
   // activates all current links originating from a modifier by id
@@ -119,14 +133,21 @@ const App = () => {
         c$(link.c_id).value += m$(link.m_id).value;
         // update the text value
         c$(link.c_id).text = c$(link.c_id).title + ": " + c$(link.c_id).value;
+        // update the element
+        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
         // modifier.operator logic
       } else if (m$(link.m_id).operator === "-") {
         // change the category value
         c$(link.c_id).value -= m$(link.m_id).value;
         // update the text for html
         c$(link.c_id).text = c$(link.c_id).title + ": " + c$(link.c_id).value;
+        // update the element
+        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
       }
     });
+    console.log(links)
+    console.log(mods)
+    console.log(cats)
   }
   // reverses activation
   // same code but with reversed operators and boolean values
@@ -136,8 +157,10 @@ const App = () => {
       if (m$(link.m_id).operator === "+") {
         c$(link.c_id).value -= m$(link.m_id).value;
         c$(link.c_id).text = c$(link.c_id).title + ": " + c$(link.c_id).value;
+        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
       } else if (m$(link.m_id).operator === "-") {
         c$(link.c_id).value += m$(link.m_id).value;
+        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
       }
     });
   }
@@ -145,14 +168,14 @@ const App = () => {
   return (
     <div className="App">
       <ModifierConstructor new_mod={new_mod} />
+      <CategoryConstructor new_cat={new_cat} />
+      <CategoryList cats={cats} c$={c$} />
       <ModifierList
         mods={mods}
         m$={m$}
         activate={activate}
         deactivate={deactivate}
       />
-      <CategoryConstructor new_cat={new_cat} />
-      <CategoryList cats={cats} c$={c$} />
       <button onClick={generate_links}>LINK</button>
     </div>
   );

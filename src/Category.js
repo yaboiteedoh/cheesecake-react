@@ -8,17 +8,11 @@ export function Category({category, c$}) {
     c$(category.id).selected = !c$(category.id).selected
     // style depending on selected state
     if (c$(category.id).selected) {
-      f.es$('#' + category.id).forEach((category) => {
-        category.parentElement.style.background
-          = 'rgb(74, 47, 0)'
-      })
+      f.e$('#' + category.id).parentElement.style.background = 'rgb(74, 47, 0)'
       // style depending on selected state
     } else {
-      f.es$('#' + category.id).forEach((category) => {
-        category.parentElement.style.background
-          = 'rgb(44, 28, 0)'
-      })
-    }
+      f.e$('#' + category.id).parentElement.style.background = 'rgb(44, 28, 0)'
+      }
   }
 
   return (
