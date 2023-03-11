@@ -5,6 +5,7 @@ import { ModifierList } from "./ModifierList";
 import { useState } from "react";
 import * as f from "./frontendLogic"
 
+
 const App = () => {
   // states
   const [mods, setMods] = useState([]);
@@ -16,7 +17,7 @@ const App = () => {
   function new_mod(m_title, m_operator, m_value) {
     const mod = {
       // primary key
-      id: "m" + (mods.length + 1),
+      id: "m" + randomID(),
       // user input
       title: m_title,
       // currently + or -
@@ -38,7 +39,7 @@ const App = () => {
   function new_cat(c_title, c_value) {
     let cat = {
       // primary key
-      id: "c" + (cats.length + 1),
+      id: "c" + randomID(),
       // user input
       title: c_title,
       // user input
@@ -59,7 +60,7 @@ const App = () => {
   function new_link(m_id, c_id) {
     var link = {
       // primary key
-      id: "l" + (links.length + 1),
+      id: "l" + randomID(),
       // modifier to originate from
       m_id: m_id,
       // category to act on
@@ -122,59 +123,117 @@ const App = () => {
 
   // activates all current links originating from a modifier by id
   function activate(m_id) {
-    // query for link object via modifier id
-    // iterate for each link object in query array
+    // easy reference relevant links
+    var links_array = []
     l$(m_id).forEach((link) => {
-      // query for modifier object via modifier id (from link object)
-      // modifier.operator logic
-      if (m$(link.m_id).operator === "+") {
-        // query for category object via category id (via link object)
-        // change the category value
-        c$(link.c_id).value += m$(link.m_id).value;
-        // update the text value
-        c$(link.c_id).text = c$(link.c_id).title + ": " + c$(link.c_id).value;
-        // update the element
-        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
-        // modifier.operator logic
-      } else if (m$(link.m_id).operator === "-") {
-        // change the category value
-        c$(link.c_id).value -= m$(link.m_id).value;
-        // update the text for html
-        c$(link.c_id).text = c$(link.c_id).title + ": " + c$(link.c_id).value;
-        // update the element
-        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
-      }
+      var new_link = link;
+      links_array.push(new_link)
     });
-    console.log(links)
-    console.log(mods)
-    console.log(cats)
+
+    links_array.forEach((link) => {
+      // read/write
+      var new_cat = c$(link.c_id);
+      // read only
+      var this_mod = m$(link.m_id);
+      // remove the outdated object
+      setCats((prevCats) => prevCats.filter((cat) => cat.id !== new_cat.id))
+
+      // if + then +
+      if (this_mod.operator === "+") {
+        new_cat.value += this_mod.value;
+        // adjust innerText with current data
+        new_cat.text = new_cat.title + " " + new_cat.value;
+      // if - then -
+      } else if (this_mod.operator === "-") {
+        new_cat.value -= this_mod.value;
+        // adjust innerText with current data
+        new_cat.text = new_cat.title + " " + new_cat.value;
+      }
+
+      // add the updated object
+      setCats((prevCats) => [...prevCats, new_cat]);
+    });
   }
   // reverses activation
-  // same code but with reversed operators and boolean values
+  // same code but with reversed operators
   function deactivate(m_id) {
+    var links_array = []
     l$(m_id).forEach((link) => {
-      m$(link.m_id).active = false;
-      if (m$(link.m_id).operator === "+") {
-        c$(link.c_id).value -= m$(link.m_id).value;
-        c$(link.c_id).text = c$(link.c_id).title + ": " + c$(link.c_id).value;
-        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
-      } else if (m$(link.m_id).operator === "-") {
-        c$(link.c_id).value += m$(link.m_id).value;
-        f.e$('#' + link.c_id).innerText = c$(link.c_id).text
-      }
+      var new_link = link;
+      links_array.push(new_link)
     });
+    links_array.forEach((link) => {
+      var new_cat;
+      var this_mod = m$(link.m_id);
+      new_cat = c$(link.c_id);
+      setCats((prevCats) => prevCats.filter((cat) => cat.id !== new_cat.id))
+      if (this_mod.operator === "+") {
+        new_cat.value -= this_mod.value;
+        new_cat.text = new_cat.title + " " + new_cat.value;
+      } else if (this_mod.operator === "-") {
+        new_cat.value += this_mod.value;
+        new_cat.text = new_cat.title + " " + new_cat.value;
+      }
+      setCats((prevCats) => [...prevCats, new_cat]);
+    });
+  }
+
+  // state functions
+  function filterCats(new_cat) {
+    let i = cats.indexOf(c$(new_cat.id));
+    const new_cats = cats.filter(cat => 
+      cat.id !== new_cat.id);
+    setCats(new_cats);
+
+    return i;
+  }
+  function updateCats(new_cat, i) {
+    let insert = i;
+    const next_cats = [
+      ...cats.slice(0, insert),
+      new_cat,
+      ...cats.slice(insert+1)
+    ];
+    setCats(next_cats);
+  }
+  function filterMods(new_mod) {
+    let i = mods.indexOf(m$(new_mod.id));
+    const new_mods = mods.filter(mod => 
+      mod.id !== new_mod.id);
+    setMods(new_mods);
+
+    return i;
+  }
+  function updateMods(new_mod, i) {
+    let insert = i;
+    const next_mods = [
+      ...mods.slice(0, insert),
+      new_mod,
+      ...mods.slice(insert+1)
+    ];
+    setMods(next_mods);
+  }
+
+  function randomID(){
+    return Math.floor(Math.random() * Date.now())
   }
 
   return (
     <div className="App">
       <ModifierConstructor new_mod={new_mod} />
       <CategoryConstructor new_cat={new_cat} />
-      <CategoryList cats={cats} c$={c$} />
+      <CategoryList 
+        cats={cats} 
+        c$={c$}
+        updateCats={updateCats}
+        filterCats={filterCats} />
       <ModifierList
         mods={mods}
         m$={m$}
         activate={activate}
         deactivate={deactivate}
+        updateMods={updateMods}
+        filterMods={filterMods}
       />
       <button onClick={generate_links}>LINK</button>
     </div>
