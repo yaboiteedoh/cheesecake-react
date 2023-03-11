@@ -1,8 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
-import * as f from './frontendLogic'
 
-export function CategoryConstructor({new_cat}) {
+export function CategoryConstructor() {
     // states
     const [value, setValue] = useState("");
 
@@ -14,15 +13,6 @@ export function CategoryConstructor({new_cat}) {
         // backspace button
         } else if (button === "B"){
             setValue(value.substring(0, value.length - 1));
-        // submit button
-        } else if (button === "S"){
-            // if relevent fields aren't empty
-            if (f.e$('#cat_title').value && value){
-                // create the backend object
-                new_cat(f.e$('#cat_title').value, f.e$('#cat_value').innerText);
-            } else {
-                alert("Please provide a title and value")
-            }
         // numpad buttons
         } else {
             setValue(value + String(button));
@@ -50,7 +40,6 @@ export function CategoryConstructor({new_cat}) {
             </div>
             <input id="cat_title" placeholder="TITLE INPUT"></input>
             <div id="cat_value">{ value }</div>
-            <button onClick={ () => { handleClick("S"); } }>SUBMIT</button>
         </div>
   )
 }

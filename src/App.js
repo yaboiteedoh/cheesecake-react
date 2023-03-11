@@ -2,6 +2,8 @@ import { CategoryConstructor } from "./CategoryConstructor";
 import { CategoryList } from "./CategoryList";
 import { ModifierConstructor } from "./ModifierConstructor";
 import { ModifierList } from "./ModifierList";
+import { Bigbutton } from "./Bigbutton"
+import { Createobject } from "./Createobject";
 import { useState } from "react";
 import * as f from "./frontendLogic"
 
@@ -11,6 +13,38 @@ const App = () => {
   const [mods, setMods] = useState([]);
   const [cats, setCats] = useState([]);
   const [links, setLinks] = useState([]);
+  const [screen, setScreen] = useState("M");
+
+  // self explanitory
+  function screen_logic(){
+    const add_mod = f.e$("#add_modifier").dataset.selected;
+    const add_cat = f.e$("#add_category").dataset.selected;
+    const modsel = mS$();
+    const catsel = cS$();
+    const mt = f.e$('#mod_title').value;
+    const mo = f.e$('#mod_operator').innerText;
+    const mv = f.e$('#mod_value').innerText;
+    const ct = f.e$('#cat_title').value;
+    const cv = f.e$('#cat_value').innerText;
+    if (screen === "M" && modsel.length === 0 && catsel.length === 0){
+      setScreen("OS")
+    } else if (screen === "OS" && add_mod === true) {
+      setScreen("CM")
+    } else if (screen === "OS" && add_cat === true) {
+      setScreen("CC")
+    } else if (screen === "CC" && ct && cv) {
+      new_cat(ct, cv);
+      setScreen("M")
+    } else if (screen === "CM" && mt && mo && mv) {
+      new_mod(mt, mo, mv);
+      setScreen("M")
+    } else if (screen === "M" && modsel.length > 0 && catsel.length > 0) {
+      generate_links();
+    }
+    console.log("add_cat " + add_cat)
+    console.log("add_mod " + add_mod)
+    console.log("screen " + screen)
+  }
 
   // creates a new modifier backend object and stores it to the state
   // returns a copy of that object, for easier access to attributes
@@ -73,6 +107,7 @@ const App = () => {
     // for attribute data
     return link;
   }
+
   // generates links via all selected modifiers/categories
   function generate_links() {
     const mods = mS$();
@@ -220,22 +255,26 @@ const App = () => {
 
   return (
     <div className="App">
-      <ModifierConstructor new_mod={new_mod} />
-      <CategoryConstructor new_cat={new_cat} />
-      <CategoryList 
-        cats={cats} 
-        c$={c$}
-        updateCats={updateCats}
-        filterCats={filterCats} />
-      <ModifierList
-        mods={mods}
-        m$={m$}
-        activate={activate}
-        deactivate={deactivate}
-        updateMods={updateMods}
-        filterMods={filterMods}
-      />
-      <button onClick={generate_links}>LINK</button>
+      <div className="main_screen">
+        <ModifierList
+          mods={mods}
+          m$={m$}
+          activate={activate}
+          deactivate={deactivate}
+          updateMods={updateMods}
+          filterMods={filterMods}
+        />
+        <CategoryList 
+          cats={cats} 
+          c$={c$}
+          updateCats={updateCats}
+          filterCats={filterCats}
+        />
+      </div>
+      <Createobject />
+      <Bigbutton screen_logic={screen_logic} />
+      <ModifierConstructor />
+      <CategoryConstructor />
     </div>
   );
 };
